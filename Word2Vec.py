@@ -5,6 +5,7 @@ import nltk
 from nltk.corpus import stopwords
 from gensim.models import Word2Vec
 from gensim.models.phrases import Phrases, Phraser
+import os
 
 # Download necessary NLTK data
 nltk.download('punkt')
@@ -108,6 +109,18 @@ print("Calculating document vectors...")
 X_features = np.array([get_avg_word2vec(tokens, word2vec_model) for tokens in df['Tokens']])
 print("Feature engineering completed!")
 
-np.save("word2vec_features.npy", X_features)
+# split feature vectors into two files
+features = X_features
+half_idx = len(features) // 2  # split into two equal parts
+
+np.save("word2vec_features_part1.npy", features[:half_idx])
+np.save("word2vec_features_part2.npy", features[half_idx:])
+
+print(f"Feature vectors have been split: part1: {features[:half_idx].shape}, part2: {features[half_idx:].shape}")
+
+# avoid saving a single large file
+# np.save("word2vec_features.npy", X_features)  # comment out this line
+
+# save sentiment labels
 np.save("sentiment_labels.npy", np.array(df['Sentiment']))
-print("Feature vectors and labels have been saved to 'word2vec_features.npy' and 'sentiment_labels.npy'")
+print("Feature vectors and labels have been saved to 'word2vec_features_part1.npy', 'word2vec_features_part2.npy' and 'sentiment_labels.npy'")
