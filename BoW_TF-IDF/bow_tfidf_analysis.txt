@@ -1,0 +1,68 @@
+Feature Analysis Report
+Generated at: 2025-04-02 16:15:07
+==================================================
+
+Reading training data...
+Loading features...
+
+1. Basic Feature Information:
+
+BoW Training Features Information:
+Shape: (74682, 10000)
+Data Type: float64
+Non-zero Element Count: 701556
+Feature Value Range: [0.0, 1.0]
+
+BoW Validation Features Information:
+Shape: (1000, 10000)
+Data Type: float64
+Non-zero Element Count: 10534
+Feature Value Range: [0.0, 1.0]
+
+TF-IDF Training Features Information:
+Shape: (74682, 10000)
+Data Type: float64
+Non-zero Element Count: 701556
+Feature Value Range: [0.0, 1.0]
+
+TF-IDF Validation Features Information:
+Shape: (1000, 10000)
+Data Type: float64
+Non-zero Element Count: 10534
+Feature Value Range: [0.0, 1.0]
+
+2. Label Distribution:
+Training set: {'Irrelevant': 12990, 'Negative': 22542, 'Neutral': 18318, 'Positive': 20832}
+Validation set: {'Irrelevant': 172, 'Negative': 266, 'Neutral': 285, 'Positive': 277}
+
+3. Sample Analysis:
+Sample index: 0
+Original text: im getting on borderlands and i will murder you all ,
+Sentiment label: Positive
+BoW feature non-zero elements: 4
+TF-IDF feature non-zero elements: 4
+
+4. Feature Sparsity Analysis:
+BoW feature sparsity: 0.9991
+TF-IDF feature sparsity: 0.9991
+
+5. Feature Consistency Check:
+BoW training and validation feature dimensions match: True
+TF-IDF training and validation feature dimensions match: True
+
+6. Feature Effectiveness Analysis:
+BoW zero feature count: 0
+TF-IDF zero feature count: 0
+
+7. Feature Distribution Analysis:
+BoW feature statistics:
+  Mean: 0.0003
+  Standard deviation: 0.0010
+  Median: 0.0001
+
+TF-IDF feature statistics:
+  Mean: 0.0003
+  Standard deviation: 0.0007
+  Median: 0.0001
+
+Analysis completed successfully!
