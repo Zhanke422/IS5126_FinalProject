@@ -1,5 +1,5 @@
 Feature Analysis Report
-Generated at: 2025-04-02 16:15:07
+Generated at: 2025-04-02 16:32:20
 ==================================================
 
 Reading training data...
@@ -8,28 +8,32 @@ Loading features...
 1. Basic Feature Information:
 
 BoW Training Features Information:
-Shape: (74682, 10000)
+Shape: (74682, 5000)
 Data Type: float64
-Non-zero Element Count: 701556
-Feature Value Range: [0.0, 1.0]
+Non-zero Element Count: 649732
+Sparsity: 0.9983
+Feature Value Range: [0.01086892316858733, 1.0]
 
 BoW Validation Features Information:
-Shape: (1000, 10000)
+Shape: (1000, 5000)
 Data Type: float64
-Non-zero Element Count: 10534
-Feature Value Range: [0.0, 1.0]
+Non-zero Element Count: 9711
+Sparsity: 0.9981
+Feature Value Range: [0.14433756729740646, 1.0]
 
 TF-IDF Training Features Information:
-Shape: (74682, 10000)
+Shape: (74682, 5000)
 Data Type: float64
-Non-zero Element Count: 701556
-Feature Value Range: [0.0, 1.0]
+Non-zero Element Count: 649732
+Sparsity: 0.9983
+Feature Value Range: [0.004937594315080285, 1.0]
 
 TF-IDF Validation Features Information:
-Shape: (1000, 10000)
+Shape: (1000, 5000)
 Data Type: float64
-Non-zero Element Count: 10534
-Feature Value Range: [0.0, 1.0]
+Non-zero Element Count: 9711
+Sparsity: 0.9981
+Feature Value Range: [0.08230378569003272, 1.0]
 
 2. Label Distribution:
 Training set: {'Irrelevant': 12990, 'Negative': 22542, 'Neutral': 18318, 'Positive': 20832}
@@ -43,8 +47,8 @@ BoW feature non-zero elements: 4
 TF-IDF feature non-zero elements: 4
 
 4. Feature Sparsity Analysis:
-BoW feature sparsity: 0.9991
-TF-IDF feature sparsity: 0.9991
+BoW feature sparsity: 0.9983
+TF-IDF feature sparsity: 0.9983
 
 5. Feature Consistency Check:
 BoW training and validation feature dimensions match: True
@@ -56,13 +60,19 @@ TF-IDF zero feature count: 0
 
 7. Feature Distribution Analysis:
 BoW feature statistics:
-  Mean: 0.0003
-  Standard deviation: 0.0010
-  Median: 0.0001
+  Mean: 0.0005
+  Standard deviation: 0.0014
+  Median: 0.0002
 
 TF-IDF feature statistics:
-  Mean: 0.0003
-  Standard deviation: 0.0007
-  Median: 0.0001
+  Mean: 0.0005
+  Standard deviation: 0.0010
+  Median: 0.0002
+
+8. File Size Information:
+bow_features_train.npz: 0.89 MB
+bow_features_val.npz: 0.02 MB
+tfidf_features_train.npz: 4.96 MB
+tfidf_features_val.npz: 0.09 MB
 
 Analysis completed successfully!

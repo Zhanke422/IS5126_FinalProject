@@ -8,6 +8,7 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import re
 import os
+from scipy import sparse
 
 # Download required NLTK data
 nltk.download('punkt')
@@ -17,8 +18,20 @@ nltk.download('averaged_perceptron_tagger')
 
 class TextPreprocessor:
     def __init__(self):
-        self.stop_words = set(stopwords.words('english'))
-        self.lemmatizer = WordNetLemmatizer()
+        # Download required NLTK data if not available
+        try:
+            nltk.data.find('tokenizers/punkt')
+            nltk.data.find('corpora/stopwords')
+            nltk.data.find('tokenizers/punkt')
+            nltk.data.find('corpora/wordnet')
+        except LookupError:
+            nltk.download('punkt')
+            nltk.download('stopwords')
+            nltk.download('averaged_perceptron_tagger')
+            nltk.download('wordnet')
+        
+        self.stop_words = set(nltk.corpus.stopwords.words('english'))
+        self.lemmatizer = nltk.WordNetLemmatizer()
     
     def preprocess(self, text):
         """
@@ -44,13 +57,12 @@ class TextPreprocessor:
         tokens = word_tokenize(text)
         
         # Lemmatize and remove stopwords
-        tokens = [self.lemmatizer.lemmatize(token) for token in tokens]
-        tokens = [token for token in tokens if token not in self.stop_words]
+        tokens = [self.lemmatizer.lemmatize(token) for token in tokens if token not in self.stop_words]
         
         return ' '.join(tokens)
 
 class FeatureEngineering:
-    def __init__(self, max_features=10000):
+    def __init__(self, max_features=10000):  # Reduce feature dimensions
         self.preprocessor = TextPreprocessor()
         self.bow_vectorizer = CountVectorizer(max_features=max_features)
         self.tfidf_vectorizer = TfidfVectorizer(max_features=max_features)
@@ -64,8 +76,8 @@ class FeatureEngineering:
         # Convert to BoW features
         bow_features = self.bow_vectorizer.fit_transform(processed_texts)
         # Optional: Apply L2 normalization
-        bow_features = normalize(bow_features, norm='l2')
-        return bow_features.toarray()  # Convert to dense array
+        bow_features = normalize(bow_features, norm='l2', copy=False)
+        return bow_features  # Keep sparse format
     
     def transform_bow(self, texts):
         """
@@ -73,8 +85,8 @@ class FeatureEngineering:
         """
         processed_texts = [self.preprocessor.preprocess(text) for text in texts]
         bow_features = self.bow_vectorizer.transform(processed_texts)
-        bow_features = normalize(bow_features, norm='l2')
-        return bow_features.toarray()  # Convert to dense array
+        bow_features = normalize(bow_features, norm='l2', copy=False)
+        return bow_features  # Keep sparse format
     
     def fit_transform_tfidf(self, texts):
         """
@@ -84,7 +96,7 @@ class FeatureEngineering:
         processed_texts = [self.preprocessor.preprocess(text) for text in texts]
         # Convert to TF-IDF features
         tfidf_features = self.tfidf_vectorizer.fit_transform(processed_texts)
-        return tfidf_features.toarray()  # Convert to dense array
+        return tfidf_features  # Keep sparse format
     
     def transform_tfidf(self, texts):
         """
@@ -92,7 +104,7 @@ class FeatureEngineering:
         """
         processed_texts = [self.preprocessor.preprocess(text) for text in texts]
         tfidf_features = self.tfidf_vectorizer.transform(processed_texts)
-        return tfidf_features.toarray()  # Convert to dense array
+        return tfidf_features  # Keep sparse format
     
     def get_feature_names(self, feature_type='bow'):
         """
@@ -126,7 +138,7 @@ if __name__ == "__main__":
     y_val = validation_df['sentiment'].values
     
     # Create feature engineering object
-    feature_engineering = FeatureEngineering(max_features=10000)
+    feature_engineering = FeatureEngineering(max_features=10000)  # Reduce feature dimensions
     
     # Generate BoW features
     print("Generating BoW features...")
@@ -139,12 +151,30 @@ if __name__ == "__main__":
     tfidf_val = feature_engineering.transform_tfidf(X_val)
     
     # Save features and labels
-    print("Saving features and labels...")
-    np.save('bow_features_train.npy', bow_train)
-    np.save('bow_features_val.npy', bow_val)
-    np.save('tfidf_features_train.npy', tfidf_train)
-    np.save('tfidf_features_val.npy', tfidf_val)
+    print("\nSaving features...")
+    # Save complete sparse matrices
+    sparse.save_npz('bow_features_train.npz', bow_train)
+    sparse.save_npz('bow_features_val.npz', bow_val)
+    sparse.save_npz('tfidf_features_train.npz', tfidf_train)
+    sparse.save_npz('tfidf_features_val.npz', tfidf_val)
     np.save('y_train.npy', y_train)
     np.save('y_val.npy', y_val)
     
-    print("Feature engineering completed!") 
+    print("\nFeature engineering completed!")
+    print(f"BoW features shape - Train: {bow_train.shape}, Val: {bow_val.shape}")
+    print(f"TF-IDF features shape - Train: {tfidf_train.shape}, Val: {tfidf_val.shape}")
+    print(f"Labels shape - Train: {y_train.shape}, Val: {y_val.shape}")
+    
+    # Print sparsity information
+    print("\nFeature sparsity:")
+    print(f"BoW train: {1.0 - bow_train.nnz/(bow_train.shape[0]*bow_train.shape[1]):.4f}")
+    print(f"BoW val: {1.0 - bow_val.nnz/(bow_val.shape[0]*bow_val.shape[1]):.4f}")
+    print(f"TF-IDF train: {1.0 - tfidf_train.nnz/(tfidf_train.shape[0]*tfidf_train.shape[1]):.4f}")
+    print(f"TF-IDF val: {1.0 - tfidf_val.nnz/(tfidf_val.shape[0]*tfidf_val.shape[1]):.4f}")
+    
+    # Print file size information
+    print("\nFile sizes:")
+    for file in ['bow_features_train.npz', 'bow_features_val.npz', 
+                 'tfidf_features_train.npz', 'tfidf_features_val.npz']:
+        size_mb = os.path.getsize(file) / (1024 * 1024)
+        print(f"{file}: {size_mb:.2f} MB") 

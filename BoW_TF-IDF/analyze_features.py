@@ -4,6 +4,7 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from bow_tfidf import TextPreprocessor
 import os
 from datetime import datetime
+from scipy import sparse
 
 def print_feature_info(features, name, output_file):
     """
@@ -12,8 +13,9 @@ def print_feature_info(features, name, output_file):
     info = f"\n{name} Information:\n"
     info += f"Shape: {features.shape}\n"
     info += f"Data Type: {features.dtype}\n"
-    info += f"Non-zero Element Count: {np.count_nonzero(features)}\n"
-    info += f"Feature Value Range: [{np.min(features)}, {np.max(features)}]\n"
+    info += f"Non-zero Element Count: {features.nnz}\n"
+    info += f"Sparsity: {1.0 - features.nnz/(features.shape[0]*features.shape[1]):.4f}\n"
+    info += f"Feature Value Range: [{features.data.min()}, {features.data.max()}]\n"
     output_file.write(info)
     print(info)
 
@@ -37,10 +39,10 @@ def analyze_features():
             
             # Load generated features
             f.write("Loading features...\n")
-            bow_train = np.load('bow_features_train.npy')
-            bow_val = np.load('bow_features_val.npy')
-            tfidf_train = np.load('tfidf_features_train.npy')
-            tfidf_val = np.load('tfidf_features_val.npy')
+            bow_train = sparse.load_npz('bow_features_train.npz')
+            bow_val = sparse.load_npz('bow_features_val.npz')
+            tfidf_train = sparse.load_npz('tfidf_features_train.npz')
+            tfidf_val = sparse.load_npz('tfidf_features_val.npz')
             y_train = np.load('y_train.npy', allow_pickle=True)
             y_val = np.load('y_val.npy', allow_pickle=True)
             
@@ -66,15 +68,15 @@ def analyze_features():
             sample_info = f"Sample index: {sample_idx}\n"
             sample_info += f"Original text: {train_df['text'].iloc[sample_idx]}\n"
             sample_info += f"Sentiment label: {y_train[sample_idx]}\n"
-            sample_info += f"BoW feature non-zero elements: {np.count_nonzero(bow_train[sample_idx])}\n"
-            sample_info += f"TF-IDF feature non-zero elements: {np.count_nonzero(tfidf_train[sample_idx])}\n"
+            sample_info += f"BoW feature non-zero elements: {bow_train[sample_idx].nnz}\n"
+            sample_info += f"TF-IDF feature non-zero elements: {tfidf_train[sample_idx].nnz}\n"
             f.write(sample_info)
             print(sample_info)
             
             # 4. Feature Sparsity Analysis
             f.write("\n4. Feature Sparsity Analysis:\n")
-            bow_sparsity = 1 - (np.count_nonzero(bow_train) / bow_train.size)
-            tfidf_sparsity = 1 - (np.count_nonzero(tfidf_train) / tfidf_train.size)
+            bow_sparsity = 1.0 - bow_train.nnz/(bow_train.shape[0]*bow_train.shape[1])
+            tfidf_sparsity = 1.0 - tfidf_train.nnz/(tfidf_train.shape[0]*tfidf_train.shape[1])
             sparsity_info = f"BoW feature sparsity: {bow_sparsity:.4f}\n"
             sparsity_info += f"TF-IDF feature sparsity: {tfidf_sparsity:.4f}\n"
             f.write(sparsity_info)
@@ -89,8 +91,8 @@ def analyze_features():
             
             # 6. Feature Effectiveness Analysis
             f.write("\n6. Feature Effectiveness Analysis:\n")
-            bow_zero_cols = np.sum(bow_train, axis=0) == 0
-            tfidf_zero_cols = np.sum(tfidf_train, axis=0) == 0
+            bow_zero_cols = np.array(bow_train.sum(axis=0)).flatten() == 0
+            tfidf_zero_cols = np.array(tfidf_train.sum(axis=0)).flatten() == 0
             effectiveness_info = f"BoW zero feature count: {np.sum(bow_zero_cols)}\n"
             effectiveness_info += f"TF-IDF zero feature count: {np.sum(tfidf_zero_cols)}\n"
             f.write(effectiveness_info)
@@ -98,8 +100,8 @@ def analyze_features():
             
             # 7. Feature Distribution Analysis
             f.write("\n7. Feature Distribution Analysis:\n")
-            bow_mean = np.mean(bow_train, axis=0)
-            tfidf_mean = np.mean(tfidf_train, axis=0)
+            bow_mean = np.array(bow_train.mean(axis=0)).flatten()
+            tfidf_mean = np.array(tfidf_train.mean(axis=0)).flatten()
             
             f.write("BoW feature statistics:\n")
             bow_stats = f"  Mean: {np.mean(bow_mean):.4f}\n"
@@ -115,6 +117,15 @@ def analyze_features():
             f.write(tfidf_stats)
             print(tfidf_stats)
             
+            # 8. File Size Information
+            f.write("\n8. File Size Information:\n")
+            for file in ['bow_features_train.npz', 'bow_features_val.npz', 
+                        'tfidf_features_train.npz', 'tfidf_features_val.npz']:
+                size_mb = os.path.getsize(file) / (1024 * 1024)
+                file_info = f"{file}: {size_mb:.2f} MB\n"
+                f.write(file_info)
+                print(file_info)
+            
             f.write("\nAnalysis completed successfully!")
             print(f"\nAnalysis results have been saved to: {output_path}")
             
@@ -122,14 +133,14 @@ def analyze_features():
         error_msg = f"Error occurred: {str(e)}\n"
         error_msg += "\nPlease make sure you have run bow_tfidf.py first to generate the feature files.\n"
         error_msg += "The required files are:\n"
-        error_msg += "- bow_features_train.npy\n"
-        error_msg += "- bow_features_val.npy\n"
-        error_msg += "- tfidf_features_train.npy\n"
-        error_msg += "- tfidf_features_val.npy\n"
+        error_msg += "- bow_features_train.npz\n"
+        error_msg += "- bow_features_val.npz\n"
+        error_msg += "- tfidf_features_train.npz\n"
+        error_msg += "- tfidf_features_val.npz\n"
         error_msg += "- y_train.npy\n"
         error_msg += "- y_val.npy\n"
         print(error_msg)
-        if 'f' in locals():
+        if 'f' in locals() and not f.closed:
             f.write(error_msg)
 
 if __name__ == "__main__":
