@@ -14,7 +14,7 @@ nltk.download('stopwords')
 
 # 1. Data Reading and Cleaning
 print("Reading dataset...")
-df = pd.read_csv('../twitter dataset/twitter_training.csv', header=None)
+df = pd.read_csv('twitter dataset/twitter_training.csv', header=None)
 df.columns = ['ID', 'Entity', 'Sentiment', 'Content']
 print(f"Dataset shape: {df.shape}")
 
@@ -111,9 +111,10 @@ print("Feature engineering completed!")
 features = X_features
 half_idx = len(features) // 2  # split into two equal parts
 
-output_dir = '../Word2Vec'
+# save output to Word2Vec file
+output_dir = 'Word2Vec'  
 
-# save features vector
+# save feature vector to Word2Vec File
 np.save(os.path.join(output_dir, "word2vec_features_part1.npy"), features[:half_idx])
 np.save(os.path.join(output_dir, "word2vec_features_part2.npy"), features[half_idx:])
 
@@ -122,9 +123,9 @@ print(f"Feature vectors have been split: part1: {features[:half_idx].shape}, par
 # avoid saving a single large file
 # np.save("word2vec_features.npy", X_features)  # comment out this line
 
-# save label
+# save label to Word2Vec
 np.save(os.path.join(output_dir, "sentiment_labels.npy"), np.array(df['Sentiment']))
 print("Feature vectors and labels have been saved to 'word2vec_features_part1.npy', 'word2vec_features_part2.npy' and 'sentiment_labels.npy'")
 
-# save model
+# save model to Word2Vec
 word2vec_model.save(os.path.join(output_dir, "word2vec_twitter.model"))
