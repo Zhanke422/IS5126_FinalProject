@@ -1,0 +1,78 @@
+Feature Analysis Report
+Generated at: 2025-04-02 16:32:20
+==================================================
+
+Reading training data...
+Loading features...
+
+1. Basic Feature Information:
+
+BoW Training Features Information:
+Shape: (74682, 5000)
+Data Type: float64
+Non-zero Element Count: 649732
+Sparsity: 0.9983
+Feature Value Range: [0.01086892316858733, 1.0]
+
+BoW Validation Features Information:
+Shape: (1000, 5000)
+Data Type: float64
+Non-zero Element Count: 9711
+Sparsity: 0.9981
+Feature Value Range: [0.14433756729740646, 1.0]
+
+TF-IDF Training Features Information:
+Shape: (74682, 5000)
+Data Type: float64
+Non-zero Element Count: 649732
+Sparsity: 0.9983
+Feature Value Range: [0.004937594315080285, 1.0]
+
+TF-IDF Validation Features Information:
+Shape: (1000, 5000)
+Data Type: float64
+Non-zero Element Count: 9711
+Sparsity: 0.9981
+Feature Value Range: [0.08230378569003272, 1.0]
+
+2. Label Distribution:
+Training set: {'Irrelevant': 12990, 'Negative': 22542, 'Neutral': 18318, 'Positive': 20832}
+Validation set: {'Irrelevant': 172, 'Negative': 266, 'Neutral': 285, 'Positive': 277}
+
+3. Sample Analysis:
+Sample index: 0
+Original text: im getting on borderlands and i will murder you all ,
+Sentiment label: Positive
+BoW feature non-zero elements: 4
+TF-IDF feature non-zero elements: 4
+
+4. Feature Sparsity Analysis:
+BoW feature sparsity: 0.9983
+TF-IDF feature sparsity: 0.9983
+
+5. Feature Consistency Check:
+BoW training and validation feature dimensions match: True
+TF-IDF training and validation feature dimensions match: True
+
+6. Feature Effectiveness Analysis:
+BoW zero feature count: 0
+TF-IDF zero feature count: 0
+
+7. Feature Distribution Analysis:
+BoW feature statistics:
+  Mean: 0.0005
+  Standard deviation: 0.0014
+  Median: 0.0002
+
+TF-IDF feature statistics:
+  Mean: 0.0005
+  Standard deviation: 0.0010
+  Median: 0.0002
+
+8. File Size Information:
+bow_features_train.npz: 0.89 MB
+bow_features_val.npz: 0.02 MB
+tfidf_features_train.npz: 4.96 MB
+tfidf_features_val.npz: 0.09 MB
+
+Analysis completed successfully!
