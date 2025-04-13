@@ -103,7 +103,7 @@ Key libraries include:
 
 ## Additional Note
 
-Some of the results and models are too large for submission and have been excluded from this repository (files > 10MB). If you wish to access these files, please reach out to the project group for assistance.
+Except preprocessed dataset, all of the results and models are too large for submission and have been excluded from this repository. If you wish to access these files, please reach out to the project group for assistance.
 
 ## Acknowledgements
 
