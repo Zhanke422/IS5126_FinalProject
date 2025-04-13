@@ -101,6 +101,10 @@ Key libraries include:
 - shap
 - optuna
 
+## Additional Note
+
+Some of the results and models are too large for submission and have been excluded from this repository (files > 10MB). If you wish to access these files, please reach out to the project group for assistance.
+
 ## Acknowledgements
 
 - The Twitter Entity Sentiment Analysis dataset from Kaggle
